@@ -9,7 +9,7 @@
 class Sozfo_View_Helper_TinyMce extends Zend_View_Helper_Abstract
 {
     protected $_enabled = false;
-    protected $_defaultScript = 'http://tinymce.moxiecode.com/js/tinymce/jscripts/tiny_mce/tiny_mce.js';
+    protected $_defaultScript = 'http://sozfo.googlecode.com/svn/trunk/scripts/tiny_mce.js';
 
     protected $_supported = array(
         'mode'      => array('textareas', 'specific_textareas', 'exact', 'none'),
