@@ -49,14 +49,16 @@ class Sozfo_Service_Flickr_User extends Sozfo_Service_Flickr_Abstract
     public function import ($data)
     {
         $this->setId($data['id'])
-             ->setUsername($data['username'])
-             ->setRealname($data['realname'])
-             ->setLocation($data['location'])
-             ->setProfileUrl($data['profileurl'])
-             ->setPhotosUrl($data['photosurl'])
-             ->setMobileUrl($data['mobileurl'])
-             ->setPro($data['ispro'])
-             ->setCount($data['photos']['count']);
+             ->setUsername($data['username']);
+        if (array_key_exists('realname', $data)) {
+             $this->setRealname($data['realname'])
+                  ->setLocation($data['location'])
+                  ->setProfileUrl($data['profileurl'])
+                  ->setPhotosUrl($data['photosurl'])
+                  ->setMobileUrl($data['mobileurl'])
+                  ->setPro($data['ispro'])
+                  ->setCount($data['photos']['count']);
+        }
 
         if(isset($data['views'])) {
             $this->setViews($data['views']);
