@@ -127,6 +127,7 @@ class Sozfo_View_Helper_TinyMce extends Zend_View_Helper_Abstract
     {
         $script = 'tinyMCE.init({' . PHP_EOL;
 
+        $params = array();
         foreach ($this->_config as $name => $value) {
             if (is_array($value)) {
                 $value = implode(',', $value);
@@ -134,9 +135,9 @@ class Sozfo_View_Helper_TinyMce extends Zend_View_Helper_Abstract
             if (!is_bool($value)) {
                 $value = '"' . $value . '"';
             }
-            $script .= $name . ': ' . $value . ',' . PHP_EOL;
+            $params[] = $name . ': ' . $value;
         }
-
+        $script .= implode(',' . PHP_EOL, $params) . PHP_EOL;
         $script .= '});';
 
         $this->view->headScript()->appendScript($script);
