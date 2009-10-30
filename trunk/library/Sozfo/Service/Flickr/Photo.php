@@ -7,6 +7,7 @@ class Sozfo_Service_Flickr_Photo extends Sozfo_Service_Flickr_Abstract
     protected $_title;
     protected $_description;
     protected $_sets = array();
+    protected $_tags;
     protected $_owner;
     protected $_media;
     protected $_thumb;
@@ -226,6 +227,21 @@ class Sozfo_Service_Flickr_Photo extends Sozfo_Service_Flickr_Abstract
             $this->_loadInfo();
         }
         return $this->_server;
+    }
+
+    public function getTags ()
+    {
+        if (null === $this->_tags) {
+            $options['photo_id'] = $this->getId();
+            $response = $this->_request('tags.getListPhoto', $options)->photo;
+            $this->_tags = array();
+            foreach ($response['tags']['tag'] as $item) {
+                $tag= $this->getBroker()->factory('tag');
+                $tag->setName($item);
+                $this->_tags[] = $tag;
+            }
+        }
+        return $this->_tags;
     }
 
     protected function _loadInfo()

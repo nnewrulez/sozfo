@@ -9,12 +9,20 @@ class Sozfo_Service_Flickr_Group extends Sozfo_Service_Flickr_Abstract
 
     public function import ($data)
     {
-        $this->setId($data['id'])
-             ->setName($data['name'])
-             ->setDescription($data['description'])
-             ->setMemberCount($data['members']);
+        $this->setName($data['name']);
 
-         return $this;
+        if (isset($data['id'])) {
+            $this->setId($data['id']);
+        } elseif (isset($data['nsid'])) {
+            $this->setId($data['nsid']);
+        }
+
+        if (isset($data['description'])) {
+            $this->setDescription($data['description'])
+                 ->setMemberCount($data['members']);
+        }
+
+        return $this;
     }
 
     public function getList ($page = 1, $perPage = 400)
@@ -23,14 +31,14 @@ class Sozfo_Service_Flickr_Group extends Sozfo_Service_Flickr_Abstract
             'page'      => $page,
             'per_page'  => $perPage
         );
-        $response = $this->_request('groups.pools.getGroups', $options)->photosets;
-        $list = array();
-        foreach ($response['group'] as $group) {
+        $response = $this->_request('groups.pools.getGroups', $options)->groups;
+        $groups = array();
+        foreach ($response['group'] as $data) {
             $group = $this->getBroker()->factory('group');
-            $group->import($group);
-            $list[] = $group;
+            $group->import($data);
+            $groups[] = $group;
         }
-        return $list;
+        return $groups;
     }
 
     public function setName ($name)

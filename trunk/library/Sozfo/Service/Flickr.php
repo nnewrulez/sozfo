@@ -70,10 +70,6 @@ class Sozfo_Service_Flickr
         return $this->_cache;
     }
 
-    public function getFrobUrl() {}
-
-    public function getTokenFromFrob() {}
-
     public function factory ($name, $id = null)
     {
         $name = ucfirst($name);
@@ -81,9 +77,10 @@ class Sozfo_Service_Flickr
             $class = $this->_getLoader()->load($name);
             $this->_store[$name] = new $class($id);
 
-            if (method_exists($this->_store[$name], 'setBroker')) {
-                $this->_store[$name]->setBroker($this);
+            if (!$this->_store[$name] instanceof Sozfo_Service_Flickr_Interface) {
+                throw new Sozfo_Service_Flickr_Exception('The clas should implement Sozfo_Service_Flickr_Interface');
             }
+            $this->_store[$name]->setBroker($this);
         }
         $object = clone $this->_store[$name];
         return $object->setId($id);

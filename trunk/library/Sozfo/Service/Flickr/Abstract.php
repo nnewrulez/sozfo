@@ -1,5 +1,5 @@
 <?php
-abstract class Sozfo_Service_Flickr_Abstract
+abstract class Sozfo_Service_Flickr_Abstract implements Sozfo_Service_Flickr_Interface
 {
     const URI_BASE = 'http://www.flickr.com';
 

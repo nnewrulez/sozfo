@@ -11,11 +11,14 @@ class Sozfo_Service_Flickr_User extends Sozfo_Service_Flickr_Abstract
     protected $_count;
     protected $_views;
 
+    protected $_groups;
+    protected $_photos;
+
     public function find ($id)
     {
-        if (false !== strstr($id, '@')) {
+        if (false !== strpos($id, '@')) {
             return $this->findByEmail($id);
-        } elseif (false !== strstr($id, Sozfo_Service_Flickr_Abstract::URI_BASE)) {
+        } elseif (false !== strpos($id, Sozfo_Service_Flickr_Abstract::URI_BASE)) {
             return $this->findByUrl($id);
         } else {
             return $this->findByUsername($id);
@@ -50,14 +53,15 @@ class Sozfo_Service_Flickr_User extends Sozfo_Service_Flickr_Abstract
     {
         $this->setId($data['id'])
              ->setUsername($data['username']);
-        if (array_key_exists('realname', $data)) {
-             $this->setRealname($data['realname'])
-                  ->setLocation($data['location'])
-                  ->setProfileUrl($data['profileurl'])
-                  ->setPhotosUrl($data['photosurl'])
-                  ->setMobileUrl($data['mobileurl'])
-                  ->setPro($data['ispro'])
-                  ->setCount($data['photos']['count']);
+        if (isset($data['realname'])) {
+            // When the realname is set, we can assume all profile fields are available
+            $this->setRealname($data['realname'])
+                 ->setLocation($data['location'])
+                 ->setProfileUrl($data['profileurl'])
+                 ->setPhotosUrl($data['photosurl'])
+                 ->setMobileUrl($data['mobileurl'])
+                 ->setPro($data['ispro'])
+                 ->setCount($data['photos']['count']);
         }
 
         if(isset($data['views'])) {
@@ -200,6 +204,41 @@ class Sozfo_Service_Flickr_User extends Sozfo_Service_Flickr_Abstract
             $this->_loadInfo();
         }
         return $this->_views;
+    }
+
+    public function getGroups ()
+    {
+        if (null === $this->_groups) {
+            $options['user_id'] = $this->getId();
+            $response = $this->_request('people.getPublicGroups', $options)->groups;
+            $this->_groups = array();
+            foreach ($response['group'] as $item) {
+                $group = $this->getBroker()->factory('group');
+                $group->import($item);
+                $this->_groups[] = $group;
+            }
+        }
+        return $this->_groups;
+    }
+
+    public function getPhotos ($page = 1, $perPage = 100)
+    {
+        if ($perPage > 500) {
+            $perPage = 500;
+        }
+        $options = array(
+            'user_id'  => $this->getId(),
+            'page'     => $page,
+            'per_page' => $perPage,
+        );
+        $response = $this->_request('people.getPublicPhotos', $options)->photos;
+        $photos = array();
+        foreach ($response['photo'] as $item) {
+            $photo = $this->getBroker()->factory('photo');
+            $photo->import($item);
+            $photos[] = $photo;
+        }
+        return $photos;
     }
 
     protected function _loadInfo(){
