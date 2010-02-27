@@ -9,7 +9,7 @@ abstract class Sozfo_Service_Flickr_Abstract implements Sozfo_Service_Flickr_Int
 
     public function __construct ($id = null)
     {
-        $this->_id = null;
+        $this->_id = $id;
     }
 
     public function __set($name, $value)
