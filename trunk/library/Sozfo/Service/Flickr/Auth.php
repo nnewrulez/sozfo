@@ -2,11 +2,15 @@
 class Sozfo_Service_Flickr_Auth extends Sozfo_Service_Flickr_Abstract
 {
     const format = 'http://flickr.com/services/auth/?api_key=%s&perms=%s&extra=%s&api_sig=%s';
+    const perms = array('read', 'write', 'delete');
 
     protected $_perms = 'read';
 
     public function setPerms ($perms)
     {
+        if (!in_array($perms, self::perms)) {
+            throw new Sozfo_Service_Flickr_Exception('Permission must be one of the following: ' . implode(', ', self::perms));
+        }
         $this->_perms = (string) $perms;
         return $this;
     }

@@ -2,6 +2,7 @@
 class Sozfo_Service_Flickr
 {
     protected $_loader;
+    protected $_prefixPath = array('Sozfo_Service_Flickr_' => 'Sozfo/Service/Flickr/');
     protected $_store = array();
     protected $_key;
     protected $_secret;
@@ -86,15 +87,19 @@ class Sozfo_Service_Flickr
         return $object->setId($id);
     }
 
+    public function addPluginPath ($prefix, $path)
+    {
+        if (isset($this->_loader)) {
+            $this->_loader->addPrefixPath($prefix, $path);
+        } elseif(!isset($this->_prefixPath[$prefix])) {
+            $this->_prefixPath[$prefix] = $path;
+        }
+    }
+
     protected function _getLoader()
     {
         if (!isset($this->_loader)) {
-            $prefix     = 'Sozfo_Service_Flickr_';
-            $pathPrefix = 'Sozfo/Service/Flickr/';
-
-            $this->_loader = new Zend_Loader_PluginLoader(array(
-                $prefix => $pathPrefix
-                ));
+            $this->_loader = new Zend_Loader_PluginLoader($this->_prefixPath);
         }
         return $this->_loader;
     }
