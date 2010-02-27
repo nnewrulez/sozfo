@@ -97,7 +97,7 @@ class Sozfo_View_Helper_TinyMce extends Zend_View_Helper_Abstract
         $this->_scriptFile = (string) $file;
     }
 
-    public function useCompressor ($switch)
+    public function setCompressor ($switch)
     {
         $this->_useCompressor = (bool) $switch;
         return $this;
@@ -115,7 +115,7 @@ class Sozfo_View_Helper_TinyMce extends Zend_View_Helper_Abstract
 
     protected function _renderScript ()
     {
-        if (null === $this->_scriptFile) {
+        if(null === $this->_scriptFile) {
             $script = $this->_defaultScript;
         } else {
             $script = $this->_scriptPath . '/' . $this->_scriptFile;
@@ -130,11 +130,18 @@ class Sozfo_View_Helper_TinyMce extends Zend_View_Helper_Abstract
         if (false === $this->_useCompressor) {
             return;
         }
+
+        if (isset($this->_config['plugins']) && is_array($this->_config['plugins'])) {
+            $plugins = $this->_config['plugins'];
+        } else {
+            $plugins = $this->_supported['plugins'];
+        }
+        
         $script = 'tinyMCE_GZ.init({' . PHP_EOL
-                . 'themes: "' . implode(',', $this->_supportedTheme) . '"' . PHP_EOL
-                . 'plugins: "'. implode(',', $this->_supportedPlugins) . '"' . PHP_EOL
-                . 'languages: "' . implode(',', $this->_supportedLanguages) . '"' . PHP_EOL
-                . 'disk_cache: true' . PHP_EOL
+                . 'themes: "' . implode(',', $this->_supported['theme']) . '",' . PHP_EOL
+                . 'plugins: "'. implode(',', $plugins) . '",' . PHP_EOL
+                . 'languages: "' . implode(',', $this->_supported['languages']) . '",' . PHP_EOL
+                . 'disk_cache: true,' . PHP_EOL
                 . 'debug: false' . PHP_EOL
                 . '});';
 
