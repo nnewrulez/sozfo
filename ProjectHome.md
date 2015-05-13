@@ -1,0 +1,1 @@
+Soflomo is a young and innovating company. It creates products based on Zend Framework. Soflomo is very open minded and therefore licensed some parts of its library under the BSD license.
